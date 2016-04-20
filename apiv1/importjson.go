@@ -20,8 +20,13 @@ func importJSON(db *sql.DB, req string) string {
 	return "{\"success\":true}"
 }
 
-func validateJSON(data jsonData) bool {
+func validateJSON(data string) bool {
 	return true
+}
+
+func convertJSON(json string) []jsonData {
+	var data []jsonData
+	return data
 }
 
 //retrieveLastTransaction should be a db handler

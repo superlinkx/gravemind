@@ -1,6 +1,9 @@
 package apiv1
 
+import "database/sql"
+
 //ImportJSONHandler is mapped to the API method import_json
 func ImportJSONHandler() {
-	importJSON("", "")
+	var db *sql.DB
+	importJSON(db, "")
 }
