@@ -1,2 +1,2 @@
 # Project Gravemind
-## An API server for tracking transaction histories from Keystroke
+## A web-based dashboard for keystroke
