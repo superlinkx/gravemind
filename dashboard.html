@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{.BusinessName}}'s Dashboard</title>
+	</head>
+	<body>
+		<h1>{{.BusinessName}}'s Dashboard</h1>
+		<h2>Last Updated {{.DateTime}}</h2>
+		{{range $key, $value := .Data}}
+			{{$value.NumTrans}}
+		{{end}}
+	</body>
+</html>
