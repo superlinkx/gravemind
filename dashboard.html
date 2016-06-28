@@ -5,9 +5,51 @@
 	</head>
 	<body>
 		<h1>{{.BusinessName}}'s Dashboard</h1>
-		<h2>Last Updated {{.DateTime}}</h2>
-		{{range $key, $value := .Data}}
-			{{$value.NumTrans}}
-		{{end}}
+		<h2>Last Updated {{.LastMod}} Minutes Ago</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Trans#</th>
+					<th>Date</th>
+					<th>Time</th>
+					<th>SubTot</th>
+					<th>Tax</th>
+					<th>Total</th>
+					<th>Cost</th>
+					<th>#Trns</th>
+				</tr>
+			</thead>
+			<tbody>
+			{{range $key, $value := .Data}}
+				<tr>
+					<td>
+						{{$value.TransID}}
+					</td>
+					<td>
+						{{$value.Date}}
+					</td>
+					<td>
+						{{$value.Time}}
+					</td>
+					<td>
+						{{$value.SubTotal}}
+					</td>
+					<td>
+						{{$value.Tax}}
+					</td>
+					<td>
+						{{$value.Total}}
+					</td>
+					<td>
+						{{$value.Cost}}
+					</td>
+					<td>
+						{{$value.NumTrans}}
+					</td>
+				</tr>
+			{{end}}
+			<script type="application/javascript">
+				var refresh = window.setTimeout(function() {window.location.reload()}, 60000)
+			</script>
 	</body>
 </html>

@@ -17,7 +17,7 @@ var settings Server
 // Page Structure
 type Page struct {
 	BusinessName string
-	DateTime     string
+	LastMod      int64
 	Data         []Data
 }
 
@@ -46,6 +46,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	defer f.Close()
 
+	statInfo, _ := f.Stat()
+	lastMod := statInfo.ModTime().Unix()
+	currentTime := time.Now().Unix()
+
+	lastMod = (currentTime - lastMod) / 60
+
 	err := gocsv.UnmarshalFile(f, &data)
 
 	if err != nil {
@@ -53,11 +59,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	datetime := time.Now().Format(time.UnixDate)
-
 	p := &Page{
 		BusinessName: settings.BusinessName,
-		DateTime:     datetime,
+		LastMod:      lastMod,
 		Data:         data,
 	}
 
