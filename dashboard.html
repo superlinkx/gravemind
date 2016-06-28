@@ -2,54 +2,93 @@
 <html>
 	<head>
 		<title>{{.BusinessName}}'s Dashboard</title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		<style>
+			td {
+				width: 50%;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>{{.BusinessName}}'s Dashboard</h1>
 		<h2>Last Updated {{.LastMod}} Minutes Ago</h2>
-		<table>
+		<table id="totals" class="summaries table table-bordered">
 			<thead>
 				<tr>
-					<th>Trans#</th>
-					<th>Date</th>
-					<th>Time</th>
-					<th>SubTot</th>
-					<th>Tax</th>
-					<th>Total</th>
-					<th>Cost</th>
-					<th>#Trns</th>
+					<th>Totals</th>
 				</tr>
 			</thead>
-			<tbody>
-			{{range $key, $value := .Data}}
+			<tbody class="table-striped">
 				<tr>
-					<td>
-						{{$value.TransID}}
-					</td>
-					<td>
-						{{$value.Date}}
-					</td>
-					<td>
-						{{$value.Time}}
-					</td>
-					<td>
-						{{$value.SubTotal}}
-					</td>
-					<td>
-						{{$value.Tax}}
-					</td>
-					<td>
-						{{$value.Total}}
-					</td>
-					<td>
-						{{$value.Cost}}
-					</td>
-					<td>
-						{{$value.NumTrans}}
-					</td>
+					<td>Sales</td>
+					<td>{{.Totals.Sales}}</td>
 				</tr>
-			{{end}}
-			<script type="application/javascript">
-				var refresh = window.setTimeout(function() {window.location.reload()}, 60000)
-			</script>
+				<tr>
+					<td>Sales Tax</td>
+					<td>{{.Totals.Tax}}</td>
+				</tr>
+				<tr>
+					<td>Total</td>
+					<td>{{.Totals.Total}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="stats" class="summaries table table-bordered">
+			<thead>
+				<tr>
+					<th>Statistics</th>
+				</tr>
+			</thead>
+			<tbody class="table-striped">
+				<tr>
+					<td>Total Invoices</td>
+					<td>{{.Totals.InvCount}}</td>
+				</tr>
+				<tr>
+					<td>Invoices / Hour</td>
+					<td>{{.Totals.InvPerHr}}</td>
+				</tr>
+				<tr>
+					<td>Sales $ / Hour</td>
+					<td>{{.Totals.SalesPerHr}}</td>
+				</tr>
+				<tr>
+					<td>First Transaction</td>
+					<td>{{.Totals.FirstTransTime}}</td>
+				</tr>
+				<tr>
+					<td>Last Transaction</td>
+					<td>{{.Totals.LastTransTime}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="allgoods" class="summaries table table-bordered">
+			<thead>
+				<tr>
+					<th>All Items</th>
+				</tr>
+			</thead>
+			<tbody class="table-striped">
+				<tr>
+					<td>Sales</td>
+					<td>{{.Totals.Sales}}</td>
+				</tr>
+				<tr>
+					<td>Cost of Sales</td>
+					<td>{{.Totals.Cost}}</td>
+				</tr>
+				<tr>
+					<td>Gross Profit</td>
+					<td>{{.Totals.Profit}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<script type="application/javascript">
+			var refresh = window.setTimeout(function() {window.location.reload()}, 60000)
+		</script>
 	</body>
 </html>
