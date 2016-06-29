@@ -4,12 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"math"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	sr "github.com/superlinkx/gravemind/simpleround"
 
 	"github.com/gocarina/gocsv"
 )
@@ -86,7 +87,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFiles("dashboard.html")
 	t.Execute(w, p)
-	fmt.Println(totals)
 }
 
 func calcTotals(transactions []Transaction) Totals {
@@ -136,16 +136,16 @@ func calcTotals(transactions []Transaction) Totals {
 	profit := salesTotal - costTotal
 
 	return Totals{
-		Sales:          roundDollars(salesTotal),
-		Tax:            roundDollars(taxTotal),
-		Total:          roundDollars(grandTotal),
+		Sales:          sr.RoundDollars(salesTotal),
+		Tax:            sr.RoundDollars(taxTotal),
+		Total:          sr.RoundDollars(grandTotal),
 		InvCount:       invCount,
-		InvPerHr:       roundDollars(invPerHr),
-		SalesPerHr:     roundDollars(salesPerHr),
+		InvPerHr:       sr.RoundDollars(invPerHr),
+		SalesPerHr:     sr.RoundDollars(salesPerHr),
 		FirstTransTime: leastTime.Format("3:04 pm"),
 		LastTransTime:  greatestTime.Format("3:04 pm"),
-		Cost:           roundDollars(costTotal),
-		Profit:         roundDollars(profit),
+		Cost:           sr.RoundDollars(costTotal),
+		Profit:         sr.RoundDollars(profit),
 	}
 }
 
@@ -162,19 +162,6 @@ func getArgs() Server {
 	}
 
 	return params
-}
-
-func round(f float64) float64 {
-	return math.Floor(f + .5)
-}
-
-func preciseRound(f float64, places int) float64 {
-	shift := math.Pow(10, float64(places))
-	return round(f*shift) / shift
-}
-
-func roundDollars(f float64) float64 {
-	return preciseRound(f, 2)
 }
 
 func main() {
