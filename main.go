@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	sr "github.com/superlinkx/gravemind/simpleround"
 
 	"github.com/gocarina/gocsv"
@@ -27,16 +28,17 @@ type Page struct {
 
 // Totals storage
 type Totals struct {
-	Sales          float64
-	Tax            float64
-	Total          float64
-	InvCount       float64
-	InvPerHr       float64
-	SalesPerHr     float64
+	Sales          string
+	Tax            string
+	Total          string
+	InvCount       string
+	InvPerHr       string
+	SalesPerHr     string
+	SalesPerInv    string
 	FirstTransTime string
 	LastTransTime  string
-	Cost           float64
-	Profit         float64
+	Cost           string
+	Profit         string
 }
 
 // Transaction Structure for CSVData
@@ -132,20 +134,22 @@ func calcTotals(transactions []Transaction) Totals {
 
 	invPerHr := invCount / totalTime
 	salesPerHr := salesTotal / totalTime
+	salesPerInv := salesTotal / invCount
 
 	profit := salesTotal - costTotal
 
 	return Totals{
-		Sales:          sr.RoundDollars(salesTotal),
-		Tax:            sr.RoundDollars(taxTotal),
-		Total:          sr.RoundDollars(grandTotal),
-		InvCount:       invCount,
-		InvPerHr:       sr.RoundDollars(invPerHr),
-		SalesPerHr:     sr.RoundDollars(salesPerHr),
+		Sales:          humanize.Commaf(sr.RoundDollars(salesTotal)),
+		Tax:            humanize.Commaf(sr.RoundDollars(taxTotal)),
+		Total:          humanize.Commaf(sr.RoundDollars(grandTotal)),
+		InvCount:       humanize.Commaf(invCount),
+		InvPerHr:       humanize.Commaf(sr.RoundDollars(invPerHr)),
+		SalesPerHr:     humanize.Commaf(sr.RoundDollars(salesPerHr)),
+		SalesPerInv:    humanize.Commaf(sr.RoundDollars(salesPerInv)),
 		FirstTransTime: leastTime.Format("3:04 pm"),
 		LastTransTime:  greatestTime.Format("3:04 pm"),
-		Cost:           sr.RoundDollars(costTotal),
-		Profit:         sr.RoundDollars(profit),
+		Cost:           humanize.Commaf(sr.RoundDollars(costTotal)),
+		Profit:         humanize.Commaf(sr.RoundDollars(profit)),
 	}
 }
 

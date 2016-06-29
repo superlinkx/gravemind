@@ -27,15 +27,15 @@
 					<tbody class="table-striped">
 						<tr>
 							<td>Sales</td>
-							<td>{{.Totals.Sales}}</td>
+							<td class="text-right">${{.Totals.Sales}}</td>
 						</tr>
 						<tr>
 							<td>Sales Tax</td>
-							<td>{{.Totals.Tax}}</td>
+							<td class="text-right">${{.Totals.Tax}}</td>
 						</tr>
 						<tr>
 							<td>Total</td>
-							<td>{{.Totals.Total}}</td>
+							<td class="text-right">${{.Totals.Total}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -50,23 +50,26 @@
 					<tbody class="table-striped">
 						<tr>
 							<td>Total Invoices</td>
-							<td>{{.Totals.InvCount}}</td>
+							<td class="text-right">{{.Totals.InvCount}}</td>
 						</tr>
 						<tr>
 							<td>Invoices / Hour</td>
-							<td>{{.Totals.InvPerHr}}</td>
+							<td class="text-right">{{.Totals.InvPerHr}}</td>
 						</tr>
 						<tr>
 							<td>Sales $ / Hour</td>
-							<td>{{.Totals.SalesPerHr}}</td>
+							<td class="text-right">${{.Totals.SalesPerHr}}</td>
 						</tr>
 						<tr>
+							<td>Sales $ / Invoice</td>
+							<td class="text-right">${{.Totals.SalesPerInv}}</td>
+						<tr>
 							<td>First Transaction</td>
-							<td>{{.Totals.FirstTransTime}}</td>
+							<td class="text-right">{{.Totals.FirstTransTime}}</td>
 						</tr>
 						<tr>
 							<td>Last Transaction</td>
-							<td>{{.Totals.LastTransTime}}</td>
+							<td class="text-right">{{.Totals.LastTransTime}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -83,15 +86,15 @@
 					<tbody class="table-striped">
 						<tr>
 							<td>Sales</td>
-							<td>{{.Totals.Sales}}</td>
+							<td class="text-right">${{.Totals.Sales}}</td>
 						</tr>
 						<tr>
 							<td>Cost of Sales</td>
-							<td>{{.Totals.Cost}}</td>
+							<td class="text-right">${{.Totals.Cost}}</td>
 						</tr>
 						<tr>
 							<td>Gross Profit</td>
-							<td>{{.Totals.Profit}}</td>
+							<td class="text-right">${{.Totals.Profit}}</td>
 						</tr>
 					</tbody>
 				</table>
