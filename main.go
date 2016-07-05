@@ -55,8 +55,9 @@ type Transaction struct {
 
 // Server Parameters Structure
 type Server struct {
-	BusinessName     string
-	TransactionsFile string
+	BusinessName      string
+	TransactionsFile  string
+	DashboardTemplate string
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +88,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Totals:       totals,
 	}
 
-	t, _ := template.ParseFiles("dashboard.html")
+	t, err := template.ParseFiles(settings.DashboardTemplate)
+
+	if err != nil {
+		fmt.Println(err) // Ugly debug output
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	t.Execute(w, p)
 }
 
@@ -158,11 +166,19 @@ func getArgs() Server {
 
 	flag.StringVar(&params.BusinessName, "businessname", "", "Name for current business")
 	flag.StringVar(&params.TransactionsFile, "transfile", "", "Path to transactions.csv")
+	flag.StringVar(&params.DashboardTemplate, "template", "", "Path to dashboard.html")
 
 	flag.Parse()
 
+	var privateDir = os.Getenv("SNAP")
+
+	if params.DashboardTemplate == "" {
+		params.DashboardTemplate = privateDir + "/share/dashboard.html"
+	}
+
 	if (params.BusinessName == "") || (params.TransactionsFile == "") {
-		panic("Required flags: -businessname, -transfile")
+		params.BusinessName = "QPOINT DEV"
+		params.TransactionsFile = privateDir + "/share/transactions.csv"
 	}
 
 	return params
@@ -170,6 +186,11 @@ func getArgs() Server {
 
 func main() {
 	settings = getArgs()
+
+	fmt.Println("BusinessName: " + settings.BusinessName)
+	fmt.Println("Transfile: " + settings.TransactionsFile)
+	fmt.Println("Template: " + settings.DashboardTemplate)
+
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
