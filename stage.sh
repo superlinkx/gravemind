@@ -6,15 +6,15 @@ mkdir -p .build/usr/local/bin;
 mkdir -p .build/usr/local/share/gravemind;
 
 echo "Copying config and template files..."
-cp orion.json .build/usr/local/share/gravemind/;
-cp gravemind.service .build/etc/systemd/system/;
-cp gravemind.json .build/etc/gravemind/;
-cp dashboard.html .build/usr/local/share/gravemind/;
+cp configs/orion.json .build/usr/local/share/gravemind/;
+cp configs/gravemind.service .build/etc/systemd/system/;
+cp configs/gravemind.json .build/etc/gravemind/;
+cp configs/dashboard.html .build/usr/local/share/gravemind/;
 
 echo "Building gravemind..."
 go build -o .build/usr/local/bin/gravemind;
 
 echo "Packaging orion archive..."
-orion-packager
+orion-packager;
 
 echo "Done"
