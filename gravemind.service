@@ -1,0 +1,11 @@
+[Unit]
+Description=Gravemind Server Daemon
+After=network.target storage.mount
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/gravemind
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -55,9 +57,14 @@ type Transaction struct {
 
 // Server Parameters Structure
 type Server struct {
-	BusinessName      string
-	TransactionsFile  string
-	DashboardTemplate string
+	BusinessName      string `json:"businessname"`
+	TransactionsFile  string `json:"transfile"`
+	DashboardTemplate string `json:"dashboard_template"`
+}
+
+// Arguments Structure
+type Arguments struct {
+	Config string
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -161,35 +168,41 @@ func calcTotals(transactions []Transaction) Totals {
 	}
 }
 
-func getArgs() Server {
-	var params Server
+func getArgs() Arguments {
+	var params Arguments
 
-	flag.StringVar(&params.BusinessName, "businessname", "", "Name for current business")
-	flag.StringVar(&params.TransactionsFile, "transfile", "", "Path to transactions.csv")
-	flag.StringVar(&params.DashboardTemplate, "template", "", "Path to dashboard.html")
+	flag.StringVar(&params.Config, "config", "/etc/gravemind.json", "Location of config file (default is /etc/gravemind.json)")
 
 	flag.Parse()
-
-	var privateDir = os.Getenv("SNAP")
-
-	if params.DashboardTemplate == "" {
-		params.DashboardTemplate = privateDir + "/share/dashboard.html"
-	}
-
-	if (params.BusinessName == "") || (params.TransactionsFile == "") {
-		params.BusinessName = "QPOINT DEV"
-		params.TransactionsFile = privateDir + "/share/transactions.csv"
-	}
 
 	return params
 }
 
-func main() {
-	settings = getArgs()
+func readConfig(config string) (server Server, err error) {
+	file, e := ioutil.ReadFile(config)
+	if e != nil {
+		fmt.Printf("File error: %v\n", e)
+		return
+	}
 
-	fmt.Println("BusinessName: " + settings.BusinessName)
-	fmt.Println("Transfile: " + settings.TransactionsFile)
-	fmt.Println("Template: " + settings.DashboardTemplate)
+	err = json.Unmarshal(file, &server)
+	if err != nil {
+		fmt.Printf("JSON Unmarshalling error: %v\n", err)
+		return
+	}
+
+	return
+}
+
+func main() {
+	args := getArgs()
+	var err error
+	settings, err = readConfig(args.Config)
+
+	if err != nil {
+		fmt.Printf("Error reading config: %v\n", err)
+		os.Exit(1)
+	}
 
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
