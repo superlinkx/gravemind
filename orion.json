@@ -1,0 +1,13 @@
+{
+	"orion": "0.1-beta0",
+	"name": "gravemind",
+	"version": "0.1-beta0",
+	"description": "Dashboard for displaying Keystroke Transaction data",
+	"binary": "./.build/gravemind",
+	"service": "./configs/gravemind.service",
+	"files": [
+		"./configs/dashboard.html"
+	],
+	"conf": "./configs/gravemind.json",
+	"user": "gravemind"
+}
