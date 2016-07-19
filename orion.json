@@ -1,5 +1,5 @@
 {
-	"orion": "0.1-beta0",
+	"orion": "v1",
 	"name": "gravemind",
 	"version": "0.1-beta1",
 	"description": "Dashboard server for Keystroke transactions",

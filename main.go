@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -60,6 +61,7 @@ type Server struct {
 	BusinessName      string `json:"businessname"`
 	TransactionsFile  string `json:"transfile"`
 	DashboardTemplate string `json:"dashboard_template"`
+	Port              string `json:"port"`
 }
 
 // Arguments Structure
@@ -70,20 +72,27 @@ type Arguments struct {
 func handler(w http.ResponseWriter, r *http.Request) {
 	transactions := []Transaction{}
 
-	f, _ := os.OpenFile(settings.TransactionsFile, os.O_RDONLY, os.ModePerm)
+	f, err := os.OpenFile(settings.TransactionsFile, os.O_RDONLY, os.ModePerm)
+
+	if err != nil {
+		fmt.Printf("Error opening file: %v\n", err)
+		return
+	}
 
 	defer f.Close()
 
-	statInfo, _ := f.Stat()
+	statInfo, err := f.Stat()
+	if err != nil {
+		fmt.Printf("Error getting statinfo: %v\n", err)
+		return
+	}
 	lastMod := statInfo.ModTime().Unix()
 	currentTime := time.Now().Unix()
 
 	lastMod = (currentTime - lastMod) / 60
 
-	err := gocsv.UnmarshalFile(f, &transactions)
-
-	if err != nil {
-		fmt.Println(err)
+	if err = gocsv.UnmarshalFile(f, &transactions); err != nil {
+		fmt.Printf("Error unmarshalling file: %v\n", err)
 		return
 	}
 
@@ -96,9 +105,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t, err := template.ParseFiles(settings.DashboardTemplate)
-
 	if err != nil {
-		fmt.Println(err) // Ugly debug output
+		fmt.Printf("Error parsing template file: %v\n")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -168,42 +176,43 @@ func calcTotals(transactions []Transaction) Totals {
 	}
 }
 
-func getArgs() Arguments {
-	var params Arguments
-
-	flag.StringVar(&params.Config, "config", "/etc/gravemind.json", "Location of config file (default is /etc/gravemind.json)")
+func getArgs(params *Arguments) error {
+	flag.StringVar(&params.Config, "config", "/etc/gravemind/gravemind.json", "Location of config file (default is /etc/gravemind/gravemind.json)")
 
 	flag.Parse()
 
-	return params
+	return nil
 }
 
-func readConfig(config string) (server Server, err error) {
-	file, e := ioutil.ReadFile(config)
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		return
-	}
-
-	err = json.Unmarshal(file, &server)
+func readConfig(config string, server *Server) error {
+	file, err := ioutil.ReadFile(config)
 	if err != nil {
-		fmt.Printf("JSON Unmarshalling error: %v\n", err)
-		return
+		fmt.Printf("File error: %v\n", err)
+		return err
 	}
 
-	return
+	if err := json.Unmarshal(file, &server); err != nil {
+		fmt.Printf("JSON Unmarshalling error: %v\n", err)
+		return err
+	}
+
+	return nil
 }
 
 func main() {
-	args := getArgs()
-	var err error
-	settings, err = readConfig(args.Config)
-
-	if err != nil {
-		fmt.Printf("Error reading config: %v\n", err)
-		os.Exit(1)
+	var args Arguments
+	if err := getArgs(&args); err != nil {
+		fmt.Printf("Error getting arguments: %v\n", err)
 	}
 
+	if err := readConfig(args.Config, &settings); err != nil {
+		fmt.Printf("Error reading configuration: %v\n", err)
+	}
+
+	address := ":" + settings.Port
+
+	fmt.Println(address)
+
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(http.ListenAndServe(address, nil))
 }

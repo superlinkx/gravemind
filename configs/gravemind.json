@@ -1,5 +1,6 @@
 {
 	"dashboard_template": "/usr/local/share/gravemind/dashboard.html",
-	"transfile": "/storage/qreports/transfile.csv",
-	"businessname": "QReports"
+	"transfile": "/storage/qreports/transactions.csv",
+	"businessname": "QReports",
+	"port": "9999"
 }
