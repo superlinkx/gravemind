@@ -1,13 +1,26 @@
 {
 	"orion": "0.1-beta0",
 	"name": "gravemind",
-	"version": "0.1-beta0",
-	"description": "Dashboard for displaying Keystroke Transaction data",
-	"binary": "./.build/gravemind",
-	"service": "./configs/gravemind.service",
+	"version": "0.1-beta1",
+	"description": "Dashboard server for Keystroke transactions",
+	"binary": {
+		"name": "gravemind",
+		"path": ".build/gravemind"
+	},
+	"service": {
+		"name": "gravemind.service",
+		"path": "configs/gravemind.service"
+	},
 	"files": [
-		"./configs/dashboard.html"
+		{
+			"name": "dashboard.html",
+			"path": "configs/dashboard.html"
+		}
+
 	],
-	"conf": "./configs/gravemind.json",
+	"conf": {
+		"name": "gravemind.json",
+		"path": "./configs/gravemind.json"
+	},
 	"user": "gravemind"
 }
