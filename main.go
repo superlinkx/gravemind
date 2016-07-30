@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	sr "github.com/superlinkx/gravemind/simpleround"
+	"github.com/leekchan/accounting"
 
 	"github.com/gocarina/gocsv"
 )
@@ -106,7 +106,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFiles(settings.DashboardTemplate)
 	if err != nil {
-		fmt.Printf("Error parsing template file: %v\n")
+		fmt.Printf("Error parsing template file: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -115,6 +115,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func calcTotals(transactions []Transaction) Totals {
+	ac := accounting.Accounting{Symbol: "$", Precision: 2}
 	var invCount float64
 	var salesTotal float64
 	var taxTotal float64
@@ -162,17 +163,17 @@ func calcTotals(transactions []Transaction) Totals {
 	profit := salesTotal - costTotal
 
 	return Totals{
-		Sales:          humanize.Commaf(sr.RoundDollars(salesTotal)),
-		Tax:            humanize.Commaf(sr.RoundDollars(taxTotal)),
-		Total:          humanize.Commaf(sr.RoundDollars(grandTotal)),
+		Sales:          ac.FormatMoney(salesTotal),
+		Tax:            ac.FormatMoney(taxTotal),
+		Total:          ac.FormatMoney(grandTotal),
 		InvCount:       humanize.Commaf(invCount),
-		InvPerHr:       humanize.Commaf(sr.RoundDollars(invPerHr)),
-		SalesPerHr:     humanize.Commaf(sr.RoundDollars(salesPerHr)),
-		SalesPerInv:    humanize.Commaf(sr.RoundDollars(salesPerInv)),
+		InvPerHr:       ac.FormatMoney(invPerHr),
+		SalesPerHr:     ac.FormatMoney(salesPerHr),
+		SalesPerInv:    ac.FormatMoney(salesPerInv),
 		FirstTransTime: leastTime.Format("3:04 pm"),
 		LastTransTime:  greatestTime.Format("3:04 pm"),
-		Cost:           humanize.Commaf(sr.RoundDollars(costTotal)),
-		Profit:         humanize.Commaf(sr.RoundDollars(profit)),
+		Cost:           ac.FormatMoney(costTotal),
+		Profit:         ac.FormatMoney(profit),
 	}
 }
 
