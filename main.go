@@ -9,12 +9,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/dustin/go-humanize"
-	"github.com/leekchan/accounting"
+	"github.com/shopspring/decimal"
 
 	"github.com/gocarina/gocsv"
 )
@@ -115,33 +113,32 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func calcTotals(transactions []Transaction) Totals {
-	ac := accounting.Accounting{Symbol: "$", Precision: 2}
-	var invCount float64
-	var salesTotal float64
-	var taxTotal float64
-	var grandTotal float64
-	var costTotal float64
+	var invCount decimal.Decimal
+	var salesTotal decimal.Decimal
+	var taxTotal decimal.Decimal
+	var grandTotal decimal.Decimal
+	var costTotal decimal.Decimal
 
-	var sales float64
-	var tax float64
-	var total float64
-	var cost float64
+	var sales decimal.Decimal
+	var tax decimal.Decimal
+	var total decimal.Decimal
+	var cost decimal.Decimal
 
 	greatestTime, _ := time.Parse("3:04 pm", "12:00 am")
 	leastTime, _ := time.Parse("3:04 pm", "11:59 pm")
 
-	invCount = float64(len(transactions))
+	invCount = decimal.NewFromFloat(float64(len(transactions)))
 
 	for _, transaction := range transactions {
-		sales, _ = strconv.ParseFloat(transaction.SubTotal, 64)
-		tax, _ = strconv.ParseFloat(transaction.Tax, 64)
-		total, _ = strconv.ParseFloat(transaction.Total, 64)
-		cost, _ = strconv.ParseFloat(transaction.Cost, 64)
+		sales, _ = decimal.NewFromString(transaction.SubTotal)
+		tax, _ = decimal.NewFromString(transaction.Tax)
+		total, _ = decimal.NewFromString(transaction.Total)
+		cost, _ = decimal.NewFromString(transaction.Cost)
 
-		salesTotal += sales
-		taxTotal += tax
-		grandTotal += total
-		costTotal += cost
+		salesTotal = salesTotal.Add(sales)
+		taxTotal = taxTotal.Add(tax)
+		grandTotal = grandTotal.Add(total)
+		costTotal = costTotal.Add(cost)
 
 		transTime, _ := time.Parse("3:04 pm", strings.TrimSpace(transaction.Time))
 
@@ -156,24 +153,24 @@ func calcTotals(transactions []Transaction) Totals {
 
 	totalTime := greatestTime.Sub(leastTime).Hours()
 
-	invPerHr := invCount / totalTime
-	salesPerHr := salesTotal / totalTime
-	salesPerInv := salesTotal / invCount
+	invPerHr := invCount.Div(decimal.NewFromFloat(totalTime))
+	salesPerHr := salesTotal.Div(decimal.NewFromFloat(totalTime))
+	salesPerInv := salesTotal.Div(invCount)
 
-	profit := salesTotal - costTotal
+	profit := salesTotal.Sub(costTotal)
 
 	return Totals{
-		Sales:          ac.FormatMoney(salesTotal),
-		Tax:            ac.FormatMoney(taxTotal),
-		Total:          ac.FormatMoney(grandTotal),
-		InvCount:       humanize.Commaf(invCount),
-		InvPerHr:       ac.FormatMoney(invPerHr),
-		SalesPerHr:     ac.FormatMoney(salesPerHr),
-		SalesPerInv:    ac.FormatMoney(salesPerInv),
+		Sales:          salesTotal.StringFixed(2),
+		Tax:            taxTotal.StringFixed(2),
+		Total:          grandTotal.StringFixed(2),
+		InvCount:       invCount.StringFixed(0),
+		InvPerHr:       invPerHr.StringFixed(4),
+		SalesPerHr:     salesPerHr.StringFixed(2),
+		SalesPerInv:    salesPerInv.StringFixed(2),
 		FirstTransTime: leastTime.Format("3:04 pm"),
 		LastTransTime:  greatestTime.Format("3:04 pm"),
-		Cost:           ac.FormatMoney(costTotal),
-		Profit:         ac.FormatMoney(profit),
+		Cost:           costTotal.StringFixed(2),
+		Profit:         profit.StringFixed(2),
 	}
 }
 
