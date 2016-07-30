@@ -1,0 +1,6 @@
+{
+	"dashboard_template": "configs/dashboard.html",
+	"transfile": "configs/transactions.csv",
+	"businessname": "QReports",
+	"port": "9999"
+}
