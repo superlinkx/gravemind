@@ -51,6 +51,8 @@ type Transaction struct {
 	Tax      string `csv:"Tax"`
 	Total    string `csv:"Total"`
 	Cost     string `csv:"Cost"`
+	Ship     string `csv:"Ship"`
+	Discount string `csv:"Disc"`
 	NumTrans string `csv:"#Trns"`
 }
 
@@ -120,6 +122,9 @@ func calcTotals(transactions []Transaction) Totals {
 	var costTotal decimal.Decimal
 
 	var sales decimal.Decimal
+	var subtot decimal.Decimal
+	var discount decimal.Decimal
+	var ship decimal.Decimal
 	var tax decimal.Decimal
 	var total decimal.Decimal
 	var cost decimal.Decimal
@@ -130,7 +135,10 @@ func calcTotals(transactions []Transaction) Totals {
 	invCount = decimal.NewFromFloat(float64(len(transactions)))
 
 	for _, transaction := range transactions {
-		sales, _ = decimal.NewFromString(transaction.SubTotal)
+		subtot, _ = decimal.NewFromString(transaction.SubTotal)
+		discount, _ = decimal.NewFromString(transaction.Discount)
+		ship, _ = decimal.NewFromString(transaction.Ship)
+		sales = subtot.Sub(discount).Add(ship)
 		tax, _ = decimal.NewFromString(transaction.Tax)
 		total, _ = decimal.NewFromString(transaction.Total)
 		cost, _ = decimal.NewFromString(transaction.Cost)
