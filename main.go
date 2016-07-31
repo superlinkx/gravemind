@@ -25,6 +25,7 @@ type Page struct {
 	BusinessName string
 	LastMod      int64
 	Totals       Totals
+	Warning      string
 }
 
 // Totals storage
@@ -71,47 +72,89 @@ type Arguments struct {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	transactions := []Transaction{}
+	var totals Totals
+	var statInfo os.FileInfo
+	var lastMod int64
+	var p *Page
+	emptyFile := false
+	misalignedFile := false
 
 	f, err := os.OpenFile(settings.TransactionsFile, os.O_RDONLY, os.ModePerm)
 
 	if err != nil {
 		fmt.Printf("Error opening file: %v\n", err)
-		return
+		emptyFile = true
 	}
 
 	defer f.Close()
 
-	statInfo, err := f.Stat()
-	if err != nil {
-		fmt.Printf("Error getting statinfo: %v\n", err)
-		return
+	if !emptyFile {
+		var e error
+		statInfo, e = f.Stat()
+		if e != nil {
+			fmt.Printf("Error getting statinfo: %v\n", err)
+			lastMod = 0
+			emptyFile = true
+		} else {
+			lastMod = statInfo.ModTime().Unix()
+			currentTime := time.Now().Unix()
+
+			lastMod = (currentTime - lastMod) / 60
+		}
+
+		if err = gocsv.UnmarshalFile(f, &transactions); err != nil {
+			fmt.Printf("Error unmarshalling file: %v\n", err)
+			misalignedFile = true
+		}
+
+		if !misalignedFile {
+			totals = calcTotals(transactions)
+
+			p = &Page{
+				BusinessName: settings.BusinessName,
+				LastMod:      lastMod,
+				Totals:       totals,
+				Warning:      "",
+			}
+		}
 	}
-	lastMod := statInfo.ModTime().Unix()
-	currentTime := time.Now().Unix()
 
-	lastMod = (currentTime - lastMod) / 60
-
-	if err = gocsv.UnmarshalFile(f, &transactions); err != nil {
-		fmt.Printf("Error unmarshalling file: %v\n", err)
-		return
-	}
-
-	totals := calcTotals(transactions)
-
-	p := &Page{
-		BusinessName: settings.BusinessName,
-		LastMod:      lastMod,
-		Totals:       totals,
+	if emptyFile || misalignedFile {
+		totals = emptyTotals()
+		p = &Page{
+			BusinessName: settings.BusinessName,
+			LastMod:      lastMod,
+			Totals:       totals,
+			Warning:      "Empty set. Either no data yet or problem with transaction import. Contact Sysadmin if persists.",
+		}
 	}
 
 	t, err := template.ParseFiles(settings.DashboardTemplate)
 	if err != nil {
+		http.Error(w, "Error parsing template file", 500)
 		fmt.Printf("Error parsing template file: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	t.Execute(w, p)
+}
+
+func emptyTotals() Totals {
+	emptyTime, _ := time.Parse("3:04 pm", "12:00 am")
+	emptyTimeString := emptyTime.Format("3:04 pm")
+	return Totals{
+		Sales:          "0.00",
+		Tax:            "0.00",
+		Total:          "0.00",
+		InvCount:       "0",
+		InvPerHr:       "0.000",
+		SalesPerHr:     "0.00",
+		SalesPerInv:    "0.00",
+		FirstTransTime: emptyTimeString,
+		LastTransTime:  emptyTimeString,
+		Cost:           "0.00",
+		Profit:         "0.00",
+	}
 }
 
 func calcTotals(transactions []Transaction) Totals {
