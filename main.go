@@ -9,9 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	humanize "github.com/dustin/go-humanize"
 	"github.com/shopspring/decimal"
 
 	"github.com/gocarina/gocsv"
@@ -211,18 +213,23 @@ func calcTotals(transactions []Transaction) Totals {
 	profit := salesTotal.Sub(costTotal)
 
 	return Totals{
-		Sales:          salesTotal.StringFixed(2),
-		Tax:            taxTotal.StringFixed(2),
-		Total:          grandTotal.StringFixed(2),
-		InvCount:       invCount.StringFixed(0),
-		InvPerHr:       invPerHr.StringFixed(4),
-		SalesPerHr:     salesPerHr.StringFixed(2),
-		SalesPerInv:    salesPerInv.StringFixed(2),
+		Sales:          commaString(salesTotal, 2),
+		Tax:            commaString(taxTotal, 2),
+		Total:          commaString(grandTotal, 2),
+		InvCount:       commaString(invCount, 0),
+		InvPerHr:       commaString(invPerHr, 4),
+		SalesPerHr:     commaString(salesPerHr, 2),
+		SalesPerInv:    commaString(salesPerInv, 2),
 		FirstTransTime: leastTime.Format("3:04 pm"),
 		LastTransTime:  greatestTime.Format("3:04 pm"),
-		Cost:           costTotal.StringFixed(2),
-		Profit:         profit.StringFixed(2),
+		Cost:           commaString(costTotal, 2),
+		Profit:         commaString(profit, 2),
 	}
+}
+
+func commaString(dec decimal.Decimal, places int32) string {
+	floatConv, _ := strconv.ParseFloat(dec.StringFixed(places), 64)
+	return humanize.Commaf(floatConv)
 }
 
 func getArgs(params *Arguments) error {
