@@ -25,6 +25,16 @@ func emptyTotals() Totals {
 	}
 }
 
+func emptyROA() {
+	const zeroMoney = "0.00"
+	payments.ROAAR = zeroMoney
+	payments.ROAARAdj = zeroMoney
+	payments.ROAGiftCards = zeroMoney
+	payments.ROAOther = zeroMoney
+	payments.ROAPaidOut = zeroMoney
+	payments.ROARewardsRedeem = zeroMoney
+}
+
 func calcTotals(transactions []Transaction) Totals {
 	var invCount decimal.Decimal
 	var salesTotal decimal.Decimal
@@ -91,4 +101,7 @@ func calcTotals(transactions []Transaction) Totals {
 		Cost:           commaString(costTotal, 2),
 		Profit:         commaString(profit, 2),
 	}
+}
+
+func calcROA(roa Payments) {
 }

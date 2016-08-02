@@ -48,8 +48,8 @@ func loadTransactions(p *Page) error {
 			totals = calcTotals(transactions)
 
 			p.Totals = totals
-			p.LastMod = lastMod
-			p.Warning = ""
+			p.TransLastMod = lastMod
+			p.TransWarning = ""
 
 			return nil
 		}
@@ -57,8 +57,8 @@ func loadTransactions(p *Page) error {
 
 	totals = emptyTotals()
 	p.Totals = totals
-	p.Warning = "Empty set. Either no data yet or problem with transaction import. Contact Sysadmin if persists."
-	p.LastMod = lastMod
+	p.TransWarning = "Empty set. Either no data yet or problem with transaction import. Contact Sysadmin if persists."
+	p.TransLastMod = lastMod
 
 	return errors.New("Transactions is an empty set")
 }

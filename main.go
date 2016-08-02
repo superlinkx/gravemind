@@ -13,13 +13,11 @@ import (
 
 //Global for settings
 var settings Server
+var payments *DispPayments
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	p := &Page{
 		BusinessName: settings.BusinessName,
-		LastMod:      0,
-		Totals:       Totals{},
-		Warning:      "",
 	}
 
 	if err := loadTransactions(p); err != nil {

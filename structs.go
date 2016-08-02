@@ -2,12 +2,15 @@ package main
 
 // Page Structure
 type Page struct {
-	BusinessName string
-	LastMod      int64
-	Totals       Totals
-	ROA          ROA
-	Payments     Payments
-	Warning      string
+	BusinessName    string
+	TransLastMod    int64
+	ROALastMod      int64
+	PaymentsLastMod int64
+	Totals          Totals
+	Payments        DispPayments
+	TransWarning    string
+	ROAWarning      string
+	PaymentsWarning string
 }
 
 // Totals storage
@@ -43,6 +46,8 @@ type Transaction struct {
 type Server struct {
 	BusinessName      string `json:"businessname"`
 	TransactionsFile  string `json:"transfile"`
+	ROAFile           string `json:"roafile"`
+	PaymentsFile      string `json:"paymentsfile"`
 	DashboardTemplate string `json:"dashboard_template"`
 	Port              string `json:"port"`
 }
@@ -52,10 +57,47 @@ type Arguments struct {
 	Config string
 }
 
-// ROA Structure
-type ROA struct {
-}
-
 // Payments Structure
 type Payments struct {
+	PaymentNumber string `csv:"#"`
+	PaymentName   string `csv:"Payment Name"`
+	TotalPayments string `csv:"Count"`
+	TotalAmount   string `csv:"Total"`
+}
+
+// DispPayments Structure for displayable Payments
+type DispPayments struct {
+	Cash             string
+	NumCash          string
+	PaidOut          string
+	NumPaidOut       string
+	NetCashDep       string
+	Checks           string
+	NumChecks        string
+	CashCheckDep     string
+	NumCashCheckDep  string
+	CCDep            string
+	NumCCDep         string
+	TotalDailyDep    string
+	NumTotalDailyDep string
+	AR               string
+	NumAR            string
+	RewardsRedeem    string
+	NumRewardsRedeem string
+	ARAdj            string
+	NumARAdj         string
+	GiftCards        string
+	NumGiftCards     string
+	Other            string
+	NumOther         string
+	TotalNonCash     string
+	NumTotalNonCash  string
+	GrandTotal       string
+	ROAPaidOut       string
+	ROAAR            string
+	ROARewardsRedeem string
+	ROAARAdj         string
+	ROAGiftCards     string
+	ROAOther         string
+	PaymentsSales    string
 }
