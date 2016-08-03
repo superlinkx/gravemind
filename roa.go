@@ -9,8 +9,8 @@ import (
 	"github.com/gocarina/gocsv"
 )
 
-func loadROA(p *Page) error {
-	var roa Payments
+func loadROA(roa *Payments) error {
+	var roaData []Payment
 	var statInfo os.FileInfo
 	var lastMod int64
 	emptyFile := false
@@ -38,13 +38,13 @@ func loadROA(p *Page) error {
 			lastMod = (currentTime - lastMod) / 60
 		}
 
-		if err = gocsv.UnmarshalFile(f, &roa); err != nil {
+		if err = gocsv.UnmarshalFile(f, &roaData); err != nil {
 			fmt.Printf("Error unmarshalling file: %v\n", err)
 			misalignedFile = true
 		}
 
 		if !misalignedFile {
-			calcROA(roa)
+			parsePayment(roaData, roa)
 
 			p.ROALastMod = lastMod
 			p.ROAWarning = ""
@@ -53,7 +53,7 @@ func loadROA(p *Page) error {
 		}
 	}
 
-	emptyROA()
+	emptyPayment(roa)
 	p.ROAWarning = "Empty set. Either no data yet or problem with ROA import. Contact Sysadmin if persists."
 	p.ROALastMod = lastMod
 

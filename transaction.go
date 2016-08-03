@@ -9,11 +9,10 @@ import (
 	"github.com/gocarina/gocsv"
 )
 
-func loadTransactions(p *Page) error {
+func loadTransactions(transTotals *Totals) error {
 	transactions := []Transaction{}
 	var statInfo os.FileInfo
 	var lastMod int64
-	var totals Totals
 	emptyFile := false
 	misalignedFile := false
 
@@ -45,9 +44,8 @@ func loadTransactions(p *Page) error {
 		}
 
 		if !misalignedFile {
-			totals = calcTotals(transactions)
+			calcTotals(transactions, transTotals)
 
-			p.Totals = totals
 			p.TransLastMod = lastMod
 			p.TransWarning = ""
 
@@ -55,8 +53,8 @@ func loadTransactions(p *Page) error {
 		}
 	}
 
-	totals = emptyTotals()
-	p.Totals = totals
+	emptyTotals(transTotals)
+
 	p.TransWarning = "Empty set. Either no data yet or problem with transaction import. Contact Sysadmin if persists."
 	p.TransLastMod = lastMod
 

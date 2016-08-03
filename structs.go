@@ -1,5 +1,7 @@
 package main
 
+import "github.com/shopspring/decimal"
+
 // Page Structure
 type Page struct {
 	BusinessName    string
@@ -57,12 +59,52 @@ type Arguments struct {
 	Config string
 }
 
-// Payments Structure
-type Payments struct {
+// Payment Raw Structure
+type Payment struct {
 	PaymentNumber string `csv:"#"`
 	PaymentName   string `csv:"Payment Name"`
 	TotalPayments string `csv:"Count"`
 	TotalAmount   string `csv:"Total"`
+}
+
+// Payments contains raw extracted data
+type Payments struct {
+	PaidOut    PaymentData
+	CCPayments PaymentData
+	CCPulled   PaymentData
+	Cash       PaymentData
+	Check      PaymentData
+	Rewards    PaymentData
+	Other      PaymentData
+	OnAccount  PaymentData
+	GiftCard   PaymentData
+	ARAdj      PaymentData
+}
+
+// PaymentData Structure
+type PaymentData struct {
+	Num   int
+	Total decimal.Decimal
+}
+
+// PaymentTotals contains totalling for payments/roas
+type PaymentTotals struct {
+	NumPaidOut       int
+	NumNetCash       int
+	NumCashCheckDep  int
+	NumCCDep         int
+	NumTotalDailyDep int
+	NumTotalNonCash  int
+	PaidOut          decimal.Decimal
+	NetCashDep       decimal.Decimal
+	CashCheckDep     decimal.Decimal
+	CCDep            decimal.Decimal
+	TotalDailyDep    decimal.Decimal
+	TotalNonCash     decimal.Decimal
+	GrandTotal       decimal.Decimal
+	ROAPay           decimal.Decimal
+	ROAARAdj         decimal.Decimal
+	PaymentsSales    decimal.Decimal
 }
 
 // DispPayments Structure for displayable Payments
@@ -80,8 +122,8 @@ type DispPayments struct {
 	NumCCDep         string
 	TotalDailyDep    string
 	NumTotalDailyDep string
-	AR               string
-	NumAR            string
+	OnAccount        string
+	NumOnAccount     string
 	RewardsRedeem    string
 	NumRewardsRedeem string
 	ARAdj            string
@@ -93,11 +135,7 @@ type DispPayments struct {
 	TotalNonCash     string
 	NumTotalNonCash  string
 	GrandTotal       string
-	ROAPaidOut       string
-	ROAAR            string
-	ROARewardsRedeem string
+	ROAOnAccount     string
 	ROAARAdj         string
-	ROAGiftCards     string
-	ROAOther         string
 	PaymentsSales    string
 }

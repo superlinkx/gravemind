@@ -11,22 +11,31 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-//Global for settings
+//Globals
 var settings Server
-var payments *DispPayments
+var p *Page
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	p := &Page{
-		BusinessName: settings.BusinessName,
-	}
+	var transTotals Totals
+	var roa Payments
+	var payments Payments
+	var paytotals PaymentTotals
 
-	if err := loadTransactions(p); err != nil {
+	p.BusinessName = settings.BusinessName
+
+	if err := loadTransactions(&transTotals); err != nil {
 		fmt.Printf("%v\n", err)
 	}
-	if err := loadROA(p); err != nil {
+	if err := loadROA(&roa); err != nil {
 		fmt.Printf("%v\n", err)
 	}
-	if err := loadPayments(p); err != nil {
+	if err := loadPayments(&payments); err != nil {
+		fmt.Printf("%v\n", err)
+	}
+	if err := loadPaymentTotals(roa, payments, &paytotals); err != nil {
+		fmt.Printf("%v\n", err)
+	}
+	if err := generatePage(transTotals, roa, payments, paytotals); err != nil {
 		fmt.Printf("%v\n", err)
 	}
 
@@ -39,14 +48,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, p)
 }
 
-func error500(w *http.ResponseWriter, msg string, err error) {
-	http.Error(*w, msg, 500)
-	fmt.Printf("%v: %v\n", msg, err)
-}
-
 func commaString(dec decimal.Decimal, places int32) string {
 	floatConv, _ := strconv.ParseFloat(dec.StringFixed(places), 64)
 	return humanize.Commaf(floatConv)
+}
+
+func error500(w *http.ResponseWriter, msg string, err error) {
+	http.Error(*w, msg, 500)
+	fmt.Printf("%v: %v\n", msg, err)
 }
 
 func main() {
