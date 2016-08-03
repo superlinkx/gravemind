@@ -13,7 +13,7 @@ import (
 
 //Globals
 var settings Server
-var p *Page
+var p Page
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	var transTotals Totals
