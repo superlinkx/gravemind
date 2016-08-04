@@ -37,6 +37,7 @@ func generatePage(transtot Totals, roa Payments, payments Payments, paytot Payme
 
 	p.Totals = transtot
 	p.Payments = dispPay
+	p.ZeroMoney = "0.00"
 
 	return nil
 }

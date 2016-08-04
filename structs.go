@@ -13,6 +13,7 @@ type Page struct {
 	TransWarning    string
 	ROAWarning      string
 	PaymentsWarning string
+	ZeroMoney       string
 }
 
 // Totals storage
