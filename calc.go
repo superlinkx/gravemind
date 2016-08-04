@@ -104,6 +104,8 @@ func calcTotals(transactions []Transaction, transtot *Totals) error {
 
 	profit := salesTotal.Sub(costTotal)
 
+	perprofit := profit.Div(salesTotal).Mul(decimal.NewFromFloat(100))
+
 	transtot.Sales = commaString(salesTotal, 2)
 	transtot.Tax = commaString(taxTotal, 2)
 	transtot.Total = commaString(grandTotal, 2)
@@ -115,6 +117,7 @@ func calcTotals(transactions []Transaction, transtot *Totals) error {
 	transtot.LastTransTime = greatestTime.Format("3:04 pm")
 	transtot.Cost = commaString(costTotal, 2)
 	transtot.Profit = commaString(profit, 2)
+	transtot.PerProfit = perprofit.StringFixed(1)
 
 	return nil
 }

@@ -16,17 +16,12 @@ func loadPaymentTotals(roa Payments, payments Payments, paytotals *PaymentTotals
 	paytotals.NumCCDep = payments.CCPayments.Num + payments.CCPulled.Num
 	paytotals.TotalDailyDep = paytotals.CashCheckDep.Add(paytotals.CCDep)
 	paytotals.NumTotalDailyDep = paytotals.NumCashCheckDep + paytotals.NumCCDep
-	paytotals.TotalNonCash = payments.ARAdj.Total.Add(payments.OnAccount.Total.Add(payments.GiftCard.Total.Add(payments.Other.Total.Add(payments.Rewards.Total))))
+	paytotals.TotalNonCash = payments.ARAdj.Total.Add(payments.OnAccount.Total).Add(payments.GiftCard.Total).Add(payments.Other.Total).Add(payments.Rewards.Total)
 	paytotals.NumTotalNonCash = payments.ARAdj.Num + payments.OnAccount.Num + payments.GiftCard.Num + payments.Other.Num + payments.Rewards.Num
 	paytotals.GrandTotal = paytotals.TotalDailyDep.Add(paytotals.TotalNonCash)
-	paytotals.ROAPay = roa.CCPayments.Total.Add(roa.CCPulled.Total.Add(roa.Cash.Total.Add(roa.Check.Total.Add(roa.GiftCard.Total.Add(roa.OnAccount.Total.Add(roa.Other.Total.Add(roa.PaidOut.Total.Add(roa.Rewards.Total))))))))
+	paytotals.ROAPay = roa.CCPayments.Total.Add(roa.CCPulled.Total).Add(roa.Cash.Total).Add(roa.Check.Total).Add(roa.GiftCard.Total).Add(roa.OnAccount.Total).Add(roa.Other.Total).Add(roa.PaidOut.Total).Add(roa.Rewards.Total)
 	paytotals.ROAARAdj = roa.ARAdj.Total
-
-	temp := paytotals.GrandTotal.Add(paytotals.PaidOut)
-	temp = temp.Sub(paytotals.ROAPay)
-	temp = temp.Sub(paytotals.ROAARAdj)
-
-	paytotals.PaymentsSales = temp
+	paytotals.PaymentsSales = paytotals.GrandTotal.Add(paytotals.PaidOut).Sub(paytotals.ROAPay).Sub(paytotals.ROAARAdj)
 
 	return nil
 }

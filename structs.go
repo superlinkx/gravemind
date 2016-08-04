@@ -30,6 +30,7 @@ type Totals struct {
 	LastTransTime  string
 	Cost           string
 	Profit         string
+	PerProfit      string
 }
 
 // Transaction Structure for CSVData
