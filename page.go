@@ -21,7 +21,12 @@ func loadPaymentTotals(roa Payments, payments Payments, paytotals *PaymentTotals
 	paytotals.GrandTotal = paytotals.TotalDailyDep.Add(paytotals.TotalNonCash)
 	paytotals.ROAPay = roa.CCPayments.Total.Add(roa.CCPulled.Total.Add(roa.Cash.Total.Add(roa.Check.Total.Add(roa.GiftCard.Total.Add(roa.OnAccount.Total.Add(roa.Other.Total.Add(roa.PaidOut.Total.Add(roa.Rewards.Total))))))))
 	paytotals.ROAARAdj = roa.ARAdj.Total
-	paytotals.PaymentsSales = paytotals.GrandTotal.Add(paytotals.PaidOut.Sub(paytotals.ROAPay.Sub(paytotals.ROAARAdj)))
+
+	temp := paytotals.GrandTotal.Add(paytotals.PaidOut)
+	temp = temp.Sub(paytotals.ROAPay)
+	temp = temp.Sub(paytotals.ROAARAdj)
+
+	paytotals.PaymentsSales = temp
 
 	return nil
 }
