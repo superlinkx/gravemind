@@ -28,7 +28,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err := loadTransactions(&transTotals); err != nil {
 		fmt.Printf("%v\n", err)
 	}
-
 	if err := loadROA(&roa); err != nil {
 		fmt.Printf("%v\n", err)
 	}

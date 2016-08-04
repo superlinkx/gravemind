@@ -46,7 +46,7 @@ func loadTransactions(transTotals *Totals) error {
 		if !misalignedFile {
 			if err := checkTransDate(transactions[0].Date); err != nil {
 				sendErrorMail(err)
-				p.TransError = "Wrong date in file. An e-mail has been sent to support."
+				p.TransError = "Wrong date in file. Please report this error to your admin."
 			}
 
 			calcTotals(transactions, transTotals)

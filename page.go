@@ -49,7 +49,7 @@ func generatePaymentDisplay(roa Payments, payments Payments, paytot PaymentTotal
 	dispPay.NumPaidOut = humanize.Commaf(float64(paytot.NumPaidOut))
 	dispPay.NetCashDep = commaString(paytot.NetCashDep, 2)
 	dispPay.Checks = commaString(payments.Check.Total, 2)
-	dispPay.NumChecks = commaString(payments.Check.Total, 0)
+	dispPay.NumChecks = humanize.Commaf(float64(payments.Check.Num))
 	dispPay.CashCheckDep = commaString(paytot.CashCheckDep, 2)
 	dispPay.NumCashCheckDep = humanize.Commaf(float64(paytot.NumCashCheckDep))
 	dispPay.CCDep = commaString(paytot.CCDep, 2)
