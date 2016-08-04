@@ -44,6 +44,11 @@ func loadTransactions(transTotals *Totals) error {
 		}
 
 		if !misalignedFile {
+			if err := checkTransDate(transactions[0].Date); err != nil {
+				sendErrorMail(err)
+				p.TransError = "Wrong date in file. An e-mail has been sent to support."
+			}
+
 			calcTotals(transactions, transTotals)
 
 			p.TransLastMod = lastMod
@@ -59,4 +64,14 @@ func loadTransactions(transTotals *Totals) error {
 	p.TransLastMod = lastMod
 
 	return errors.New("Transactions is an empty set")
+}
+
+func checkTransDate(transdate string) error {
+	currentDate := time.Now().UTC()
+
+	if transdate == currentDate.Format("01/02/06") {
+		return nil
+	}
+
+	return errors.New("Date in transaction does not match current date.")
 }

@@ -13,6 +13,7 @@ type Page struct {
 	TransWarning    string
 	ROAWarning      string
 	PaymentsWarning string
+	TransError      string
 	ZeroMoney       string
 }
 
@@ -53,6 +54,9 @@ type Server struct {
 	PaymentsFile      string `json:"paymentsfile"`
 	DashboardTemplate string `json:"dashboard_template"`
 	Port              string `json:"port"`
+	SupportEmail      string `json:"supportemail"`
+	ToEmail           string `json:"toemail"`
+	EmailPass         string `json:"emailpass"`
 }
 
 // Arguments Structure
