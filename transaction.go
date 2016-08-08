@@ -67,11 +67,16 @@ func loadTransactions(transTotals *Totals) error {
 }
 
 func checkTransDate(transdate string) error {
-	currentDate := time.Now()
+	currentDate := time.Now().Format("01/02/06")
 
-	if transdate == currentDate.Format("01/02/06") {
+	fmt.Printf("Current Date: %s\n", currentDate)
+	fmt.Printf("Transaction Date: %s\n", transdate)
+
+	if transdate == currentDate {
+		fmt.Printf("Transaction date and current date are equal: true")
 		return nil
 	}
 
+	fmt.Printf("Transaction date and current date are not equal: false")
 	return errors.New("Date in transaction does not match current date.")
 }
