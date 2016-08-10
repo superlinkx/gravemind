@@ -124,32 +124,32 @@ func calcTotals(transactions []Transaction, transtot *Totals) error {
 
 func parsePayment(paymentdata []Payment, payment *Payments) {
 	for _, pay := range paymentdata {
-		switch pay.PaymentName {
-		case "Paid Out (Cash)":
+		switch pay.PaymentNumber {
+		case "0":
 			payment.PaidOut.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.PaidOut.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Credit Card Payments":
+		case "5":
 			payment.CCPayments.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.CCPayments.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Credit Card Pulled Early":
+		case "6":
 			payment.CCPulled.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.CCPulled.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Cash":
+		case "2":
 			payment.Cash.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.Cash.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Check":
+		case "4":
 			payment.Check.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.Check.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Cellar Rats Rewards":
+		case "11":
 			payment.Rewards.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.Rewards.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "On Account":
+		case "3":
 			payment.OnAccount.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.OnAccount.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "Gift Card":
+		case "9":
 			payment.GiftCard.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.GiftCard.Num, _ = strconv.Atoi(pay.TotalPayments)
-		case "AR Adjustments":
+		case "8":
 			payment.ARAdj.Total, _ = decimal.NewFromString(pay.TotalAmount)
 			payment.ARAdj.Num, _ = strconv.Atoi(pay.TotalPayments)
 		default:
