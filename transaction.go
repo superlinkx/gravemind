@@ -44,10 +44,10 @@ func loadTransactions(transTotals *Totals) error {
 		}
 
 		if !misalignedFile {
-			if err := checkTransDate(transactions[0].Date); err != nil {
+			/*if err := checkTransDate(transactions[0].Date); err != nil {
 				//sendErrorMail(err) //Disabled due to running every request. Will reimplement in Gravemind2
 				p.TransError = fmt.Sprintf("Wrong date in file. Please report this error to your admin at %v", settings.ToEmail)
-			}
+			}*/
 
 			calcTotals(transactions, transTotals)
 
