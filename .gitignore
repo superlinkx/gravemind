@@ -2,4 +2,4 @@
 *.xz
 .build
 .stage
-./gravemind
+gravemind
