@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{.BusinessName}}'s Dashboard</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+        integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <style>
+        td:nth-child(2) {
+            width: 15%;
+        }
+
+        td:last-child {
+            width: 30%
+        }
+
+        .indented {
+            padding-left: 30px !important;
+        }
+    </style>
+</head>
+
+<body class="container">
+    {{if .TransError}}
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        {{.TransError}}
+    </div>
+    {{end}}
+    {{if .TransWarning}}
+    <div class="alert alert-warning" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Warning:</span>
+        {{.TransWarning}}
+    </div>
+    {{end}}
+    {{if .ROAWarning}}
+    <div class="alert alert-warning" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Warning:</span>
+        {{.ROAWarning}}
+    </div>
+    {{end}}
+    {{if .PaymentsWarning}}
+    <div class="alert alert-warning" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Warning:</span>
+        {{.PaymentsWarning}}
+    </div>
+    {{end}}
+    <h1>{{.BusinessName}}'s Dashboard</h1>
+    <h2>Last Updated {{.TransLastMod}} Minutes Ago</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <table id="totals" class="summaries table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Totals</th>
+                    </tr>
+                </thead>
+                <tbody class="table-striped">
+                    <tr>
+                        <td>Sales</td>
+                        <td class="text-right">${{.Totals.Sales}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sales Tax</td>
+                        <td class="text-right">${{.Totals.Tax}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td class="text-right">${{.Totals.Total}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table id="allgoods" class="summaries table table-bordered">
+                <thead>
+                    <tr>
+                        <th>All Items</th>
+                    </tr>
+                </thead>
+                <tbody class="table-striped">
+                    <tr>
+                        <td>Sales</td>
+                        <td class="text-right">${{.Totals.Sales}}</td>
+                    </tr>
+                    <tr>
+                        <td>Cost of Sales</td>
+                        <td class="text-right">${{.Totals.Cost}}</td>
+                    </tr>
+                    <tr>
+                        <td>Gross Profit</td>
+                        <td class="text-right">${{.Totals.Profit}}</td>
+                    </tr>
+                    <tr>
+                        <td>% Profit</td>
+                        <td class="text-right">{{.Totals.PerProfit}}%</td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            <table id="stats" class="summaries table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Statistics</th>
+                    </tr>
+                </thead>
+                <tbody class="table-striped">
+                    <tr>
+                        <td>Total Invoices</td>
+                        <td class="text-right">{{.Totals.InvCount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Invoices / Hour</td>
+                        <td class="text-right">{{.Totals.InvPerHr}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sales $ / Hour</td>
+                        <td class="text-right">${{.Totals.SalesPerHr}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sales $ / Invoice</td>
+                        <td class="text-right">${{.Totals.SalesPerInv}}</td>
+                    <tr>
+                        <td>First Transaction</td>
+                        <td class="text-right">{{.Totals.FirstTransTime}}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Transaction</td>
+                        <td class="text-right">{{.Totals.LastTransTime}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table id="payments" class="summaries table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Payment Summary</th>
+                    </tr>
+                    <tr>
+                        <th>Type</th>
+                        <th class="text-center">#Trns</th>
+                        <th class="text-right">$</th>
+                    </tr>
+                </thead>
+                <tbody class="table-striped">
+                    <tr>
+                        <th>Deposit</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>Cash</td>
+                        <td class="text-right">{{.Payments.NumCash}}</td>
+                        <td class="text-right">${{.Payments.Cash}}</td>
+                    </tr>
+                    {{if ne .Payments.PaidOut .ZeroMoney}}
+                    <tr>
+                        <td>Less:</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="indented">Paid Out (Cash)</td>
+                        <td class="text-right">{{.Payments.NumPaidOut}}</td>
+                        <td class="text-right">${{.Payments.PaidOut}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong><u>Net Cash Deposit</u></strong></td>
+                        <td></td>
+                        <td class="text-right"><strong><u>${{.Payments.NetCashDep}}</u></strong></td>
+                    </tr>
+                    {{end}}
+                    <tr>
+                        <td>Checks</td>
+                        <td class="text-right">{{.Payments.NumChecks}}</td>
+                        <td class="text-right">${{.Payments.Checks}}</td>
+                    </tr>
+                    <tr>
+                        <td>Cash and Check Deposit</td>
+                        <td class="text-right">{{.Payments.NumCashCheckDep}}</td>
+                        <td class="text-right">${{.Payments.CashCheckDep}}</td>
+                    </tr>
+                    <tr>
+                        <td>Credit Card Deposit</td>
+                        <td class="text-right">{{.Payments.NumCCDep}}</td>
+                        <td class="text-right">${{.Payments.CCDep}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong><u>Total Daily Deposit</u></strong></td>
+                        <td class="text-right">{{.Payments.NumTotalDailyDep}}</td>
+                        <td class="text-right"><strong><u>${{.Payments.TotalDailyDep}}</u></strong></td>
+                    </tr>
+                    <tr>
+                        <th>Non-Cash Payments and Adjustments</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    {{if ne .Payments.OnAccount .ZeroMoney}}
+                    <tr>
+                        <td>Sales On Account (AR)</td>
+                        <td class="text-right">{{.Payments.NumOnAccount}}</td>
+                        <td class="text-right">${{.Payments.OnAccount}}</td>
+                    </tr>
+                    {{end}}
+                    <tr>
+                        <td>Rewards Redeemed</td>
+                        <td class="text-right">{{.Payments.NumRewardsRedeem}}</td>
+                        <td class="text-right">${{.Payments.RewardsRedeem}}</td>
+                    </tr>
+                    {{if ne .Payments.ARAdj .ZeroMoney}}
+                    <tr>
+                        <td>AR Adjustments</td>
+                        <td class="text-right">{{.Payments.NumARAdj}}</td>
+                        <td class="text-right">${{.Payments.ARAdj}}</td>
+                    </tr>
+                    {{end}}
+                    {{if ne .Payments.GiftCards .ZeroMoney}}
+                    <tr>
+                        <td>Gift Cards</td>
+                        <td class="text-right">{{.Payments.NumGiftCards}}</td>
+                        <td class="text-right">${{.Payments.GiftCards}}</td>
+                    </tr>
+                    {{end}}
+                    {{if ne .Payments.Other .ZeroMoney}}
+                    <tr>
+                        <td>Other</td>
+                        <td class="text-right">{{.Payments.NumOther}}</td>
+                        <td class="text-right">${{.Payments.Other}}</td>
+                    </tr>
+                    {{end}}
+                    <tr>
+                        <td><strong><u>Total Non-Cash Payments</u></strong></td>
+                        <td class="text-right">{{.Payments.NumTotalNonCash}}</td>
+                        <td class="text-right"><strong><u>${{.Payments.TotalNonCash}}</u></strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong><u>Grand Total of All Payments</u></strong></td>
+                        <td></td>
+                        <td class="text-right"><strong><u>${{.Payments.GrandTotal}}</u></strong></td>
+                    </tr>
+                    {{if ne .Payments.PaidOut .ZeroMoney}}
+                    <tr>
+                        <th>Plus Cash Paid Out</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td class="indented">Paid Outs</td>
+                        <td></td>
+                        <td class="text-right">${{.Payments.PaidOut}}</td>
+                    </tr>
+                    {{end}}
+                    {{if (ne .Payments.ROAOnAccount .ZeroMoney) (ne .Payments.ROAARAdj .ZeroMoney) }}
+                    <tr>
+                        <th>Less AR Payments and Adjustments</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    {{if ne .Payments.ROAOnAccount .ZeroMoney}}
+                    <tr>
+                        <td class="indented">Received On Account Payments</td>
+                        <td></td>
+                        <td class="text-right">${{.Payments.ROAOnAccount}}</td>
+                    </tr>
+                    {{end}}
+                    {{if ne .Payments.ROAARAdj .ZeroMoney}}
+                    <tr>
+                        <td class="indented">AR Adjustments</td>
+                        <td></td>
+                        <td class="text-right">${{.Payments.ROAARAdj}}</td>
+                    </tr>
+                    {{end}}
+                    {{end}}
+                    <tr>
+                        <td><strong><u>Payments Related to Sales</u></strong></td>
+                        <td></td>
+                        <td class="text-right"><strong><u>${{.Payments.PaymentsSales}}</u></strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="application/javascript">
+        var refresh = window.setTimeout(function () { window.location.reload() }, 60000)
+    </script>
+</body>
+
+</html>

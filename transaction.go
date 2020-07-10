@@ -78,5 +78,5 @@ func checkTransDate(transdate string) error {
 	}
 
 	fmt.Printf("Transaction date and current date are not equal: false")
-	return errors.New("Date in transaction does not match current date.")
+	return errors.New("date in transaction does not match current date")
 }
